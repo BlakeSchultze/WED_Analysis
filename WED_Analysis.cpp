@@ -24,6 +24,8 @@ void print_section_header( char*, char );
 void print_section_exit( char*, char* );
 char((&current_MMDD( char(&)[5]))[5]);
 char((&current_MMDDYYYY( char(&)[9]))[9]);
+bool directory_exists(char* );
+unsigned int create_unique_dir( char* );
 void set_execution_date();
 void set_IO_paths();
 
@@ -60,8 +62,7 @@ void write_WED_results( double*&, int);
 int main(unsigned int num_arguments, char** arguments)
 {
 	timer( START, program_start, program_end );
-	
-
+	apply_execution_arguments( num_arguments, arguments);
 	set_IO_paths();
 	WED_analysis();
 	printf("%s\n", current_directory );
@@ -425,9 +426,43 @@ char((&current_MMDDYYYY( char(&date_MMDDYYYY)[9]))[9])
 	strftime (date_MMDDYYYY,11,"%m%d%Y", timeinfo);
 	return date_MMDDYYYY;
 }
+bool directory_exists(char* dir_name )
+{
+	char mkdir_command[256]= "cd ";
+	strcat( mkdir_command, dir_name);
+	return !system( mkdir_command );
+}
+unsigned int create_unique_dir( char* dir_name )
+{
+	unsigned int i = 0;
+	char mkdir_command[256];//= "mkdir ";
+	char error_response[256];
+	char* statement_beginning = "A subirectory or file ";
+	char* statement_ending = " already exists";
+	sprintf(mkdir_command, "mkdir \"%s\"", dir_name);
+	//freopen("out.txt","a+",stdin);
+	while( system(mkdir_command) )
+	{
+		//std::string text = buffer.str();
+		//std::cout << "-> " << text << "<- " << endl;
+		//printf( "-> %s <-\n", text );
+		if( STDOUT_2_DISK )
+		{
+			sprintf(error_response, "%s %s_%d %s\n", statement_beginning, dir_name, i, statement_ending );
+			puts(error_response);
+		}
+		if( (strlen(mkdir_command) + strlen(statement_beginning) + strlen(statement_ending) - 6) % CONSOLE_WINDOW_WIDTH != 0 )
+			puts("");	
+		sprintf(mkdir_command, "mkdir \"%s_%d\"", dir_name, ++i);
+	}
+	//fclose("out.txt");
+	if( i != 0 )
+		sprintf(dir_name, "%s_%d", dir_name, i);
+	return i;
+}
 void set_IO_paths()
 {
-	if( true )
+	if( !DATA_PATH_PASSED )
 	{
 		std::string str =  terminal_response("chdir");
 		const char* cstr = str.c_str();
@@ -438,24 +473,20 @@ void set_IO_paths()
 		printf("%s\n", current_directory );
 		print_section_separator('-');
 	}
-	//char* current_directory, targets_directory, WED_results_directory, target_volume_directory;
 	current_MMDDYYYY( EXECUTION_DATE);
-	//current_directory = (char*) calloc( strlen(cstr), sizeof(char));
-	targets_directory = (char*) calloc( strlen(current_directory) + strlen(targets_folder) + 1, sizeof(char));
-	WED_results_directory = (char*) calloc( strlen(current_directory) + strlen(WED_results_folder) + strlen(EXECUTION_DATE) + 1, sizeof(char));
-	target_volume_directory = (char*) calloc( strlen(current_directory) + strlen(target_volume_folder) + 1, sizeof(char));
-
-	//sprintf(current_directory, "%s\\%s", current_directory, CONFIG_FILENAME );
-	sprintf(targets_directory, "%s\\%s", current_directory, targets_folder );
-	sprintf(WED_results_directory, "%s\\%s_%s", current_directory, WED_results_folder, EXECUTION_DATE );
-	sprintf(target_volume_directory, "%s\\%s", current_directory, target_volume_folder );
 	
-	char mkdir_command[256];
-	sprintf(mkdir_command, "mkdir \"%s\"", WED_results_directory );
-	system( mkdir_command );
-	//char targets_folder[] = "bap_coordinates";
-	//char target_volume_folder[] = "RStP_DICOM_PHANTOM";
-	//char WED_results_folder[] = "WED_Results";
+	targets_directory = (char*) calloc( strlen(current_directory) + strlen(targets_folder) + 1, sizeof(char));
+	target_volume_directory = (char*) calloc( strlen(current_directory) + strlen(target_volume_folder) + 1, sizeof(char));
+	WED_results_directory = (char*) calloc( strlen(current_directory) + strlen(WED_results_folder) + strlen(EXECUTION_DATE) + 1, sizeof(char));
+	
+	sprintf(targets_directory, "%s\\%s", current_directory, targets_folder );
+	sprintf(target_volume_directory, "%s\\%s", current_directory, target_volume_folder );
+	sprintf(WED_results_directory, "%s\\%s_%s", current_directory, WED_results_folder, EXECUTION_DATE );
+
+	create_unique_dir(WED_results_directory);
+	//char mkdir_command[256];
+	//sprintf(mkdir_command, "mkdir \"%s\"", WED_results_directory );
+	//system( mkdir_command );
 }
 /***********************************************************************************************************************************************************************************************************************/
 /******************************************************************************************* WED calculation and procedure functions ***********************************************************************************/

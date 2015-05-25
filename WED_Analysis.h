@@ -62,6 +62,7 @@ enum DISK_WRITE_MODE { TEXT, BINARY };										// Experimental or simulated dat
 #define Y_INCREASING_DIRECTION	DOWN									// [#] specifies direction (UP/DOWN) along y-axis in which voxel #s increase
 #define Z_INCREASING_DIRECTION	DOWN									// [#] specifies direction (UP/DOWN) along z-axis in which voxel #s increase
 #define CONSOLE_WINDOW_WIDTH	80
+#define STDOUT_2_DISK			false
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------- WED calculations parameters ----------------------------------------------------------------------*/
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -75,47 +76,28 @@ enum DISK_WRITE_MODE { TEXT, BINARY };										// Experimental or simulated dat
 #define WED_TARGET_VOXEL_WIDTH ( 0.1875 ) // mm
 #define WED_TARGET_VOXEL_HEIGHT ( 0.1875 ) // mm
 #define WED_TARGET_VOXEL_THICKNESS ( 1.25) // mm
-//#define WED_TARGET_VOXEL_STEP_SIZE ( WED_TARGET_VOXEL_WIDTH / 2 ) // cm
-//#define START_RADIUS WED_TARGET_IMAGE_WIDTH/2 //cm
 #define WED_TARGET_THRESHOLD_RSP 0.01 
-//#define WED_TARGET_INT_MEM_SIZE ( WED_TARGET_VOXELS * sizeof(int) )
-//#define WED_TARGET_FLOAT_MEM_SIZE ( WED_TARGET_VOXELS * sizeof(float) )
-//#define WED_TARGET_DOUBLE_MEM_SIZE ( WED_TARGET_VOXELS * sizeof(double) )
-//#define WED_TARGET_BOOL_MEM_SIZE ( WED_TARGET_VOXELS * sizeof(bool) )
-//#define WED_TARGET_X_MIN -96.0 //mm
-//#define WED_TARGET_X_MAX 96.0 //mm
-//#define WED_TARGET_Y_MIN -96.0 //mm
-//#define WED_TARGET_Y_MAX 96.0 //mm
-//#define WED_TARGET_Z_MIN -166.875 //mm
-//#define WED_TARGET_Z_MAX -6.875 //mm
 #define WED_TARGET_X_ZERO_COORDINATE -96		// [mm] Coordinate in x direction corresponding to voxel 0
 #define WED_TARGET_Y_ZERO_COORDINATE 96			// [mm] Coordinate in y direction corresponding to voxel 0
 #define WED_TARGET_Z_ZERO_COORDINATE -6.875		// [mm] Coordinate in z direction corresponding to voxel 0
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------- WED calculations variables -----------------------------------------------------------------------*/
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-//C:\Users\Blake\Documents\Visual Studio 2010\Projects\robust_pct\robust_pct
-// WED calculations
+//"C:\\Users\\Blake\\Documents\\Visual Studio 2010\\Projects\\robust_pct\\robust_pct"
 char* current_directory, *targets_directory, *WED_results_directory, *target_volume_directory;
 char targets_folder[] = "bap_coordinates";
 char target_volume_folder[] = "RStP_DICOM_PHANTOM";
 char WED_results_folder[] = "WED_Results";
 char WED_results_basename[] = "WED_Results";
 char target_volume_filename[] = "RStP_Phantom";
-
-const char source_directory[] = "C:\\Users\\Blake\\Documents\\Visual Studio 2010\\Projects\\robust_pct\\robust_pct\\";
-const char targets_input_dir[] = "C:\\Users\\Blake\\Documents\\Visual Studio 2010\\Projects\\robust_pct\\robust_pct\\bap_coordinates\\";
-const char target_object_dir[] = "C:\\Users\\Blake\\Documents\\Visual Studio 2010\\Projects\\robust_pct\\robust_pct\\RStP_DICOM_PHANTOM\\";
-const char WED_results_dir[] = "C:\\Users\\Blake\\Documents\\Visual Studio 2010\\Projects\\robust_pct\\robust_pct\\bap_coordinates\\WED_Results\\";
 const char targets_base_name[] = "proxi_distal";	
 
 char EXECUTION_DATE[9];
 unsigned int NUM_RUN_ARGUMENTS;
 char** RUN_ARGUMENTS;
 bool DATA_PATH_PASSED;
+
 float* RSP_Phantom_image_h, *RSP_Phantom_image_d;
-//float* RSP_Phantom_slice_h, *RSP_Phantom_slice_d;
-//bool FULL_PHANTOM = true;
 int num_targets;
 double* target_x_h, * target_x_d;
 double* target_y_h, * target_y_d;
