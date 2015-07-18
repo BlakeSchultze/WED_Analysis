@@ -14,6 +14,7 @@
 #include <initializer_list>
 #include <iostream>
 #include <iterator>
+#include <limits>
 #include <map>
 #include <new>			 
 #include <numeric>		// inner_product, partial_sum, adjacent_difference, accumulate
@@ -63,6 +64,7 @@ enum DISK_WRITE_MODE { TEXT, BINARY };										// Experimental or simulated dat
 #define Z_INCREASING_DIRECTION	DOWN									// [#] specifies direction (UP/DOWN) along z-axis in which voxel #s increase
 #define CONSOLE_WINDOW_WIDTH	80
 #define STDOUT_2_DISK			false
+#define OVERWRITE_RESULTS_OK	true
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------- WED calculations parameters ----------------------------------------------------------------------*/
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -77,9 +79,21 @@ enum DISK_WRITE_MODE { TEXT, BINARY };										// Experimental or simulated dat
 #define WED_TARGET_VOXEL_HEIGHT ( 0.1875 ) // mm
 #define WED_TARGET_VOXEL_THICKNESS ( 1.25) // mm
 #define WED_TARGET_THRESHOLD_RSP 0.01 
-#define WED_TARGET_X_ZERO_COORDINATE -96		// [mm] Coordinate in x direction corresponding to voxel 0
-#define WED_TARGET_Y_ZERO_COORDINATE 96			// [mm] Coordinate in y direction corresponding to voxel 0
-#define WED_TARGET_Z_ZERO_COORDINATE -6.875		// [mm] Coordinate in z direction corresponding to voxel 0
+#define WED_TARGET_X_ZERO_VOXEL_CENTER -90		// [mm] Coordinate in x direction corresponding to voxel 0 -96 -96.1875
+#define WED_TARGET_Y_ZERO_VOXEL_CENTER 90			// [mm] Coordinate in y direction corresponding to voxel 0 96 96.1875
+#define WED_TARGET_Z_ZERO_VOXEL_CENTER -6.875		// [mm] Coordinate in z direction corresponding to voxel 0 -6.875 -5.6250 -166.875 -168.1250
+//#define WED_TARGET_X_ZERO_COORDINATE (WED_TARGET_X_ZERO_VOXEL_CENTER - WED_TARGET_VOXEL_WIDTH / 2)		// [mm] Coordinate in x direction corresponding to voxel 0 -96 -96.1875
+//#define WED_TARGET_Y_ZERO_COORDINATE (WED_TARGET_Y_ZERO_VOXEL_CENTER - WED_TARGET_VOXEL_HEIGHT / 2)			// [mm] Coordinate in y direction corresponding to voxel 0 96 96.1875
+//#define WED_TARGET_Z_ZERO_COORDINATE (WED_TARGET_Z_ZERO_VOXEL_CENTER - WED_TARGET_VOXEL_THICKNESS / 2)		// [mm] Coordinate in z direction corresponding to voxel 0 -6.875 -5.6250 -166.875 -168.1250
+//#define WED_TARGET_X_ZERO_COORDINATE (WED_TARGET_X_ZERO_VOXEL_CENTER - WED_TARGET_VOXEL_WIDTH / 2)		// [mm] Coordinate in x direction corresponding to voxel 0 -96 -96.1875
+//#define WED_TARGET_Y_ZERO_COORDINATE (WED_TARGET_Y_ZERO_VOXEL_CENTER - WED_TARGET_VOXEL_HEIGHT / 2)			// [mm] Coordinate in y direction corresponding to voxel 0 96 96.1875
+//#define WED_TARGET_Z_ZERO_COORDINATE (WED_TARGET_Z_ZERO_VOXEL_CENTER - WED_TARGET_VOXEL_THICKNESS / 2)		// [mm] Coordinate in z direction corresponding to voxel 0 -6.875 -5.6250 -166.875 -168.1250
+#define WED_TARGET_X_ZERO_COORDINATE -90		// [mm] Coordinate in x direction corresponding to voxel 0 -96 -96.1875
+#define WED_TARGET_Y_ZERO_COORDINATE 90			// [mm] Coordinate in y direction corresponding to voxel 0 96 96.1875
+#define WED_TARGET_Z_ZERO_COORDINATE -6.875		// [mm] Coordinate in z direction corresponding to voxel 0 -6.875 -5.6250 -166.875 -168.1250
+//#define WED_TARGET_X_ZERO_COORDINATE -96		// [mm] Coordinate in x direction corresponding to voxel 0 -96 -96.1875
+//#define WED_TARGET_Y_ZERO_COORDINATE 96			// [mm] Coordinate in y direction corresponding to voxel 0 96 96.1875
+//#define WED_TARGET_Z_ZERO_COORDINATE -6.875		// [mm] Coordinate in z direction corresponding to voxel 0 -6.875 -5.6250 -166.875 -168.1250
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------- WED calculations variables -----------------------------------------------------------------------*/
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -96,6 +110,7 @@ char EXECUTION_DATE[9];
 unsigned int NUM_RUN_ARGUMENTS;
 char** RUN_ARGUMENTS;
 bool DATA_PATH_PASSED;
+bool DEBUG_ON = false;
 
 float* RSP_Phantom_image_h, *RSP_Phantom_image_d;
 int num_targets;
